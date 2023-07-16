@@ -1,0 +1,61 @@
+---
+title: "Semi-Interleaved Hiton-PC"
+output: html_notebook
+---
+
+### Install and import related packages
+```{r}
+# Prevents warnings due to already installed packages from
+# outputting.
+suppressWarnings({
+    #install.packages("bnlearn")
+    #install.packages("dplyr")
+    #install.packages("devtools") # unless you   have it already
+    #install_github("jtextor/dagitty/r")
+    
+    suppressPackageStartupMessages(library(bnlearn))
+    suppressPackageStartupMessages(library(dplyr))
+    suppressPackageStartupMessages(library(devtools))})
+```
+
+### Utils
+check_csv: assures file uploaded is of .csv format
+```{r}
+get_csv <- function(){
+    filepath <- file.choose()
+    if (!grepl("\\.csv$", filepath, ignore.case = TRUE)) {
+        message("ERROR: Please select a .csv file.")
+        return(get_csv())
+    }
+    return(filepath)
+}
+```
+
+### Keune 2016
+Read in .csv for OSD-310
+```{r}
+path_osd_310 <- get_csv()
+data_osd_310 <- read.csv(path_osd_310, header = FALSE) # now in Data Frame
+# Headerless csv, just column names
+
+
+
+# Might want to omit the first three columns bc non-numerical data
+```
+
+```{r}
+# remove first 3 columns and first row (Variable Names, use -c(0:1)) 
+# and preserve only numerical data
+sub_data_osd_310 <- data_osd_310[, -c(0:3)]
+sub_data_osd_310[] <- lapply(sub_data_osd_310, as.factor)
+```
+
+### Semi-Interleaved
+Time to throw the data into the algorithm and plot.
+NOTE: only numerical data allowed.
+```{r}
+si_structure <- si.hiton.pc(sub_data_osd_310)
+si_structure <- as.graphNEL(si_structure)
+plot(si_structure)
+```
+
