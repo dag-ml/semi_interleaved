@@ -14,4 +14,5 @@ alwood$mass <- as.vector(mass$scores)
 
 alwood <- alwood[,c("expose","trab","mass")]
 
+
 rm(list=c("trab","mass"))
