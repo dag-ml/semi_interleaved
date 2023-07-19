@@ -8,6 +8,4 @@ install.packages("devtools") # probably use this instead on 4.3
 if (!requireNamespace("BiocManager", quietly = TRUE))
  install.packages("BiocManager")
 BiocManager::install("graph", version = "3.17")
-install.packages("psych")
-install.packages("lavaan")
-BiocManager::install("Rgraphviz")
+a

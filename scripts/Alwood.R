@@ -1,4 +1,4 @@
-setwd("D:/source/repos/semi_interleaved")
+# setwd("D:/source/repos/semi_interleaved")
 
 ## Alwood
 alwood <- read.csv("data/alwood_data/LSDS-15_microCT_alwoodTRANSFORMED.csv", header=T, stringsAsFactors=F)

@@ -13,7 +13,7 @@ suppressWarnings({
     suppressPackageStartupMessages(library(Rgraphviz))
     })
 
-setwd("D:/source/repos/semi_interleaved")
+# setwd("C:/source/repos/semi_interleaved")
 
 # get Alwood data
 source("scripts/Alwood.R")
@@ -30,7 +30,6 @@ source("scripts/Ko.R")
 #-----------------------------------------------------------------
 #   Getting it into the algo
 #-----------------------------------------------------------------
-set_global_graph_attrs
 
 # plot Alwood
 si_structure <- si.hiton.pc(alwood, undirected = FALSE)
@@ -38,25 +37,20 @@ si_structure <- si.hiton.pc(alwood, undirected = FALSE)
 # modelS <- modelstring(si_structure)
 # alwood_dag <- model2network(modelS)
 si_structure # output info to the console
-si_structure_g <- as.graphNEL(si_structure)
-plot(si_structure_g)
+graphviz.plot(si_structure)
 
 # plot Turner Histomorphometry
 si_structure <- si.hiton.pc(turner, undirected = FALSE)
 si_structure
-si_structure_g <- as.graphNEL(si_structure)
-# plot(si_structure_g)
+graphviz.plot(si_structure)
 
 # plot Turner GLDS
 si_structure <- si.hiton.pc(glds, undirected = FALSE)
 si_structure
-si_structure_g <- as.graphNEL(si_structure)
-plot(si_structure_g)
+graphviz.plot(si_structure)
 
 # plot Ko
 si_structure <- si.hiton.pc(ko, undirected = FALSE)
 si_structure
-si_structure_g <- as.graphNEL(si_structure)
-# plot(si_structure_g)
-
+graphviz.plot(si_structure)
 

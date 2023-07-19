@@ -1,4 +1,4 @@
-setwd("D:/source/repos/semi_interleaved")
+# setwd("D:/source/repos/semi_interleaved")
 
 ## Turner histo
 turner <- read.csv("data/turner_data/LSDS-30_histomorphometry_turnerTRANSFORMED.csv", header=T, stringsAsFactors=F)

@@ -1,6 +1,6 @@
 
 ## GLDS
-setwd("D:/source/repos/semi_interleaved")
+# setwd("D:/source/repos/semi_interleaved")
 
 glds <- read.csv("data/turner_data/GLDS-351.csv", header=T, stringsAsFactors=F)
   glds$expose <- ifelse(glds$Teatment=="Ground Control",0,1)

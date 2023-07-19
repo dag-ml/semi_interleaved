@@ -1,4 +1,4 @@
-setwd("D:/source/repos/semi_interleaved")
+# setwd("D:/source/repos/semi_interleaved")
 
 ## Ko
 nastring <- c("           *","epiphysis broken")  # things we want R to read as NA
