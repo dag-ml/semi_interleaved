@@ -11,9 +11,13 @@ suppressWarnings({
     suppressPackageStartupMessages(library(psych))
     suppressPackageStartupMessages(library(lavaan))
     suppressPackageStartupMessages(library(Rgraphviz))
+    suppressPackageStartupMessages(library(igraph))
+    suppressPackageStartupMessages(library(tidyr))
+    
+    
     })
 
-# setwd("C:/source/repos/semi_interleaved")
+setwd("D:/source/repos/semi_interleaved")
 
 # get Alwood data
 source("scripts/Alwood.R")
@@ -52,6 +56,14 @@ graphviz.plot(glds_structure, main = "Turner GLDS")
 ext_glds <- cextend(glds_structure, strict = TRUE, debug = TRUE)
 graphviz.plot(ext_glds, main = "GLDS cextend")
 
+glds_s <- glds[, -c(3,5)]
+glds_structure <- si.hiton.pc(glds_s, debug = TRUE, undirected = FALSE)
+graphviz.plot(glds_structure, main = "GLDS Epiph")
+
+glds_t <- glds[, -c(4,6)]
+glds_structure <- si.hiton.pc(glds_t, debug = TRUE, undirected = FALSE)
+graphviz.plot(glds_structure, main = "GLDS Mass")
+
 # plot Ko
 ko_structure <- si.hiton.pc(ko, undirected = FALSE, debug = TRUE)
 ko_structure
@@ -69,8 +81,6 @@ graphviz.plot(ko_4wk_structure, main = "Ko but with 4wk durations only (all unlo
 # cextend Ko 4wk
 ext_ko <- cextend(ko_4wk_structure, strict = TRUE, debug = TRUE)
 graphviz.plot(ext_ko, main = "Ko 4wk (cextended)")
-
-plot(ko_4k$unload, ko_4wk$expose, main = "Scatter plot Example..")
 
 #Ko 60%
 ko_60 <- subset(ko, unload == 60)
@@ -105,14 +115,83 @@ graphviz.plot(ko_6080_struct, main = "Ko with all durations, 60% AND 80% unload"
 
 cextend_graph(ko_6080_struct, "Ko with 4wk, 60 & 80:")
 
+
+# Ko, correlation Matrix (all data)
+ko_graph <- as.igraph(ko_structure)
+ko_adj <- get.adjacency(ko_graph, attr = "weight", sparse = FALSE)
+graph <- graph_from_adjacency_matrix(ko_adj, mode = 'directed', weighted = TRUE)
+edge_list <- as_data_frame(graph, what = "edges")
+variables <- sort(unique(c(edge_list$from, edge_list$to)))
+cor_matrix <- matrix(0, nrow = length(variables), ncol = length(variables))
+rownames(cor_matrix) <- colnames(cor_matrix) <- variables
+for(i in 1:nrow(edge_list)){
+  cor_matrix[edge_list$from[i], edge_list$to[i]] <- edge_list$weight[i]
+  cor_matrix[edge_list$to[i], edge_list$from[i]] <- edge_list$weight[i]
+}
+corrplot(cor_matrix, method = "circle", type = "lower")
+
+
+correlation <- cor(ko, method = "pearson")
+corrplot(correlation)
+ko_cor <- cor(ko_adj)
+debug(cor(ko))
+
+
+#--------------------------------------------
+#             Rad Data
+#--------------------------------------------
+rad <- read.csv("data/radiation_data/GLDS-366_GWAS_processed_associations.csv", header=T, stringsAsFactors=T)
+
+#Take out all rows of just NA
+rad <- subset(rad, select = -c(Bgd_X.ray_8, FociPerGy_X.ray_8))
+rad <- drop_na(rad)
+# rad <- na.omit(rad)
+rad <- transform(rad, position.b38. = as.numeric(position.b38.))
+# rad$position.b38. <- as.numeric(rad$position.b38.)
+rad <- select(rad, -c(33:ncol(rad))) # ridding ourselves of duplicate cols
+rad <- rad[complete.cases(rad), ] # getting rid of anything with NA data
+write.csv(rad, "data/radiation_data/GLDS-366_saved.csv", row.names = FALSE)
+
+#------------- further sifting through the data ------------
+rad <- read.csv("data/radiation_data/GLDS-366_saved.csv", header=T, stringsAsFactors=T)
+
+# Remove duplicate rows from dataframe
+rad <- rad[!duplicated(rad), ]
+rad$chromosome <- as.factor(rad$chromosome)
+
+# Create columns labelled '1' - '22'. 1-19 corresponding to chromosomes 1-19, 
+# M = 20, X = 21, Y = 22
+for(i in 1:22) {
+  rad[, as.character(i)] <- 0
+}
+
+# If the mouse has the chromosome, set that chromosome to 1 
+for(i in 1:22) {
+  rad[rad$chromosome == i, rad$as.character(i)] <- 1
+}
+rad <- select(rad, -c(33:54)) # ridding ourselves of extra cols created by above loop for some reason
+
+
+
+
+
+
+
+
+
+
+
+
+
 #note: try regression tree for simplifying data / creating why's/separation
 # q: why are Markov blankets good for this project?
 # q: baseline to compare against?
+# q: could there be any other resources such as creating decision trees to 
+#    determine at least somewhat of a baseline
 # note: it seems that cextend is getting the directions of arcs pretty much backwards. 
 #   q:  could this be because they're using different conditional independence tests
 #       than our algorithms?
 # q: How can we get some scatter plots
 # to try doing a decision tree
 #!!python!! <sklearn> <- <pandas> dataframe <- pass dataframe into a function
-# 
 # 
