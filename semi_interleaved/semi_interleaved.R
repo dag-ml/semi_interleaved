@@ -171,7 +171,7 @@ for(i in 1:22) {
 }
 rad <- select(rad, -c(33:54)) # ridding ourselves of extra cols created by above loop for some reason
 
-
+rad_s <- si.
 
 
 
